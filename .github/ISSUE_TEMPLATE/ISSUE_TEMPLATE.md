@@ -1,5 +1,4 @@
 ## 🐛 Bug Report
-
 - **Describe the bug**
   - A clear and concise description of the issue.
 - **Steps to Reproduce**
@@ -9,7 +8,7 @@
   4. See error
 - **Expected Behavior**
   - Describe what you expected to happen.
-- **Screenshots (if applicable)**
+- **Screenshots (if applicable)**  
   - Add screenshots to help explain the problem.
 - **Environment**
   - OS: [e.g., Windows, macOS, Linux]
@@ -19,7 +18,6 @@
 ---
 
 ## 🚀 Feature Request
-
 - **Describe the Feature**
   - A clear and concise description of what you want.
 - **Use Case**
@@ -30,7 +28,6 @@
 ---
 
 ## ⚙️ General Issue
-
 - **Describe the Issue**
   - A brief overview of the problem or task.
 - **Possible Solution**
@@ -41,7 +38,6 @@
 ---
 
 ### ✅ Checklist
-
 - [ ] I have searched for existing issues to avoid duplicates.
 - [ ] I have provided all relevant details to reproduce the issue or understand the request.
 - [ ] I am willing to work on this issue (if applicable).
