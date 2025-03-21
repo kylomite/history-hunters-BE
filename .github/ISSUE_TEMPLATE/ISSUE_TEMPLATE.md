@@ -2,7 +2,7 @@
 name: "Bug Report / Feature Request / General Issue"
 about: "Use this template for bugs, features, or general issues"
 title: "[Issue]: "
-labels: ["bug", "enhancement"]
+labels: ["Feat", "BE", "FE"]
 assignees: []
 ---
 
