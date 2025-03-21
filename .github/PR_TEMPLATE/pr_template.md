@@ -36,6 +36,3 @@
 - [ ] All tests (previous and new) pass 🥳
 - [ ] This PR includes a Migration and I have notified the PM so they can run the migration after the PR is merged.
 <!--- Delete any above that do not apply to this PR -->
-
-### How to QA this change:
-<!--- Outline the steps needed to locally verify the implemented changes are working as intended -->
