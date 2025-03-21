@@ -1,3 +1,11 @@
+---
+name: "Bug Report / Feature Request / General Issue"
+about: "Use this template for bugs, features, or general issues"
+title: "[Issue]: "
+labels: ["bug", "enhancement"]
+assignees: []
+---
+
 ## 🐛 Bug Report
 - **Describe the bug**
   - A clear and concise description of the issue.
