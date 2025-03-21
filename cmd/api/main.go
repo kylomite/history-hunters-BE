@@ -9,6 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"historyHunters/internal/db"
 )
 
 func main() {
@@ -16,6 +18,12 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+
+	database, err := db.ConnectDB()
+	if err != nil {
+		log.Fatalf("Failed to connect to DB: %v", err)
+	}
+	defer database.Close()
 
 	mux := http.NewServeMux()
 
