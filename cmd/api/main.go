@@ -11,9 +11,14 @@ import (
 	"time"
 
 	"historyHunters/internal/db"
+	"historyHunters/internal/routes"
 )
 
 func main() {
+	// ROUTING
+	router := routes.NewRouter()
+
+	//SERVER CREATION
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -25,18 +30,16 @@ func main() {
 	}
 	defer database.Close()
 
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Server is running! 🚀"))
-	})
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%s", port),
-		Handler: mux,
+		Addr:         fmt.Sprintf(":%s", port),
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  15 * time.Second,
 	}
 
+	//GRACEFUL EXIT
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
@@ -50,7 +53,7 @@ func main() {
 	<-quit
 	log.Println("Shutting down server...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
