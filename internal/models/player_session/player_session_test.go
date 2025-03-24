@@ -1,4 +1,4 @@
-package models
+package player_session
 
 import (
 	"fmt"
@@ -43,6 +43,7 @@ func TestPlayerSessionFields(t *testing.T) {
 		BackgroundImg: "background.png",
 		Difficulty: 3,
 	}
+	
 	err = stage.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving stage: %v", err)
@@ -66,7 +67,7 @@ func TestPlayerSessionFields(t *testing.T) {
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
-	
+
 	err = player.Delete(db)
 	if err != nil {
 		t.Errorf("Error deleting player: %v", err)
