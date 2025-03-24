@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"historyHunters/internal/db"
-	"historyHunters/internal/routes"
+	"historyHunters/api/v1/routes"
 )
 
 func main() {
