@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// Player represents the player model.
 type Player struct {
 	ID             int
 	Email          string
@@ -38,7 +37,7 @@ func (p *Player) Save(db *sql.DB) error {
     if p.Avatar == "" {
         return errors.New("avatar is required")
     }
-	
+
 	query := `
 		INSERT INTO players (email, password_digest, avatar, score, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)

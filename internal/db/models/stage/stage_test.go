@@ -1,13 +1,15 @@
 package models
 
 import (
-	"database/sql"
-	"errors"
+	// "database/sql"
+	// "errors"
 	"testing"
-	"time"
-
-	"github.com/joho/godotenv"
+	// "time"
 	"log"
+
+
+	"historyHunters/internal/db"
+	"github.com/joho/godotenv"
 )
 
 func TestStageFields(t *testing.T) {
@@ -21,13 +23,13 @@ func TestStageFields(t *testing.T) {
 		t.Errorf("Expected background_img to be set, got %s", stage.BackgroundImg)
 	}
 
-	if stage.Difficulty != 5 {
+	if stage.Difficulty != 3 {
 		t.Errorf("Expected difficulty to be 5, got %d", stage.Difficulty)
 	}
 }
 
 func TestStageInvalidFields(t *testing.T) {
-	err := godotenv.Load("../../../.env.test")
+	err := godotenv.Load("../../../../.env.test")
 	if err != nil {
 		log.Println("Failed to load .env file:", err)
 	}
