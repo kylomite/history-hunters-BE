@@ -1,11 +1,11 @@
 package models
 
 import (
-	"historyHunters/internal/db"
 	"log"
 	"os"
 	"testing"
 
+	"historyHunters/internal/db"
 	"github.com/joho/godotenv"
 )
 
@@ -26,7 +26,7 @@ func TestPlayerFields(t *testing.T) {
 }
 
 func TestNewPlayerMissingRequiredFields(t *testing.T) {
-    err := godotenv.Load("../../../.env.test")
+    err := godotenv.Load("../../../../.env.test")
     if err != nil {
         log.Println("Failed to load .env file:", err)
     }
@@ -65,7 +65,7 @@ func TestNewPlayerDefaultScore(t *testing.T) {
 }
 
 func TestNewPlayerEmailUniqueness(t *testing.T) {
-	err := godotenv.Load("../../../.env.test")
+	err := godotenv.Load("../../../../.env.test")
 	if err != nil {
 		log.Println("Failed to load .env file:", err)
 	}
