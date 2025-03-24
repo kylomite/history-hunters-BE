@@ -1,4 +1,4 @@
-package question
+package answer
 
 import (
 	"log"
@@ -10,11 +10,12 @@ import (
 	"historyHunters/internal/models/player"
 	"historyHunters/internal/models/stage"
 	"historyHunters/internal/models/player_session"
+	"historyHunters/internal/models/question"
 
 	"github.com/joho/godotenv"
 )
 
-func TestQuestionFields(t *testing.T) {
+func TestAnswerFields(t *testing.T) {
 	err := godotenv.Load("../../../.env.test")
 	if err != nil {
 		log.Println("Failed to load .env file:", err)
@@ -26,30 +27,25 @@ func TestQuestionFields(t *testing.T) {
 	}
 	defer db.Close()
 
-
 	player := &player.Player{
 		Email:          fmt.Sprintf("test+%d@example.com", time.Now().UnixNano()),
 		PasswordDigest: "hashedpassword",
 		Avatar:         "avatar.png",
 	}
-
 	err = player.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving player: %v", err)
 	}
-
 
 	stage := &stage.Stage{
 		Title:         fmt.Sprintf("Test Stage %d", time.Now().UnixNano()),
 		BackgroundImg: "background.png",
 		Difficulty:    3,
 	}
-
 	err = stage.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving stage: %v", err)
 	}
-
 
 	playerSession := player_session.NewPlayerSession(player.ID, stage.ID, 3)
 	err = playerSession.Save(db)
@@ -57,34 +53,42 @@ func TestQuestionFields(t *testing.T) {
 		t.Fatalf("Error saving player session: %v", err)
 	}
 
-	question := NewQuestion(playerSession.ID, "What is the capital of France?")
-
-
+	question := question.NewQuestion(playerSession.ID, "What is the capital of France?")
 	err = question.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving question: %v", err)
 	}
 
-	if question.ID == 0 {
-		t.Errorf("Expected question ID to be set, got %d", question.ID)
-	}
-
-	if question.PlayerSessionID != playerSession.ID {
-		t.Errorf("Expected player_session_id to be %d, got %d", playerSession.ID, question.PlayerSessionID)
-	}
-
-	if question.QuestionText != "What is the capital of France?" {
-		t.Errorf("Expected text to be 'What is the capital of France?', got %s", question.QuestionText)
-	}
-
-	err = player.Delete(db)
+	answer := NewAnswer(question.ID, "Paris", true)
+	err = answer.Save(db)
 	if err != nil {
-		t.Errorf("Error deleting player: %v", err)
+		t.Fatalf("Error saving answer: %v", err)
 	}
 
-	err = stage.Delete(db)
+	if answer.ID == 0 {
+		t.Errorf("Expected answer ID to be set, got %d", answer.ID)
+	}
+
+	if answer.QuestionID != question.ID {
+		t.Errorf("Expected question_id to be %d, got %d", question.ID, answer.QuestionID)
+	}
+
+	if answer.AnswerText != "Paris" {
+		t.Errorf("Expected text to be 'Paris', got %s", answer.AnswerText)
+	}
+
+	if !answer.Correct {
+		t.Errorf("Expected correct to be true, got %v", answer.Correct)
+	}
+
+	err = answer.Delete(db)
 	if err != nil {
-		t.Errorf("Error deleting stage: %v", err)
+		t.Errorf("Error deleting answer: %v", err)
+	}
+
+	err = question.Delete(db)
+	if err != nil {
+		t.Errorf("Error deleting question: %v", err)
 	}
 
 	err = playerSession.Delete(db)
@@ -92,8 +96,13 @@ func TestQuestionFields(t *testing.T) {
 		t.Errorf("Error deleting player session: %v", err)
 	}
 
-	err = question.Delete(db)
+	err = stage.Delete(db)
 	if err != nil {
-		t.Errorf("Error deleting question: %v", err)
+		t.Errorf("Error deleting stage: %v", err)
+	}
+
+	err = player.Delete(db)
+	if err != nil {
+		t.Errorf("Error deleting player: %v", err)
 	}
 }
