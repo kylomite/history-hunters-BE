@@ -1,0 +1,9 @@
+CREATE TABLE answers (
+    id SERIAL PRIMARY KEY,
+    question_id INT NOT NULL,
+    text VARCHAR(255) NOT NULL,
+    correct BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_question FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+);
