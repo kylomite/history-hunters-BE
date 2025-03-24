@@ -1,77 +1,64 @@
 package models
 
 import (
-	"testing"
-	"time"
 	"historyHunters/internal/db"
+	"log"
+	"os"
+	"testing"
+
+	"github.com/joho/godotenv"
 )
 
-
 func TestPlayerFields(t *testing.T) {
-	p := &Player{
-		ID:             1,
-		Email:          "testEmail@example.com",
-		PasswordDigest: "hashed_password",
-		Avatar:         "avatar_1.png",
-		Score:          0,
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
-	}
+	player := NewPlayer("testEmail@example.com", "hashed_password", "avatar_1.png")
 
-	// Test email
-	if p.Email != "testEmail@example.com" {
-		t.Errorf("Expected email to be testEmail@example.com, got %s", p.Email)
-	}
-
-	// Test score
-	if p.Score != 0 {
-		t.Errorf("Expected score to be 0, got %d", p.Score)
-	}
-
-	// Test avatar path
-	if p.Avatar != "avatar_1.png" {
-		t.Errorf("Expected avatar to be png, got %s", p.Avatar)
-	}
-}
-func TestNewPlayerDefaultScore(t *testing.T) {
-	player, err := NewPlayer("test@example.com", "hashed_password", "avatar_1.png")
-	if err != nil {
-		t.Fatalf("failed to create player: %v", err)
+	if player.Email != "testEmail@example.com" {
+		t.Errorf("Expected email to be testEmail@example.com, got %s", player.Email)
 	}
 
 	if player.Score != 0 {
-		t.Errorf("expected score to default to 0, got %d", player.Score)
+		t.Errorf("Expected score to be 0, got %d", player.Score)
+	}
+
+	if player.Avatar != "avatar_1.png" {
+		t.Errorf("Expected avatar to be png, got %s", player.Avatar)
 	}
 }
 
-func TestNewPlayerEmailUniqueness (t *testing.T) {
-	testDB := db.InitTestDB()
+func TestNewPlayerDefaultScore(t *testing.T) {
+	player := NewPlayer("default@example.com", "hashed_password", "avatar_1.png")
 
-	// Create the first player
-	player1 := &Player{
-		Email:          "unique@example.com",
-		PasswordDigest: "hashed_password",
-		Avatar:         "avatar_1.png",
-		Score:          0,
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
+	if player.Score != 0 {
+		t.Errorf("Expected score to default to 0, got %d", player.Score)
+	}
+}
+
+func TestNewPlayerEmailUniqueness(t *testing.T) {
+	err := godotenv.Load("../../../.env.test")
+	if err != nil {
+		log.Println("Failed to load .env file:", err)
 	}
 
-	if err := testDB.Create(player1).Error; err != nil {
+	db, err := db.ConnectDB()
+	if err != nil {
+		t.Fatalf("Failed to connect to the database: %v", err)
+	}
+	defer db.Close()
+	
+	log.Println("Connecting to DB:", os.Getenv("DB_NAME"))
+
+	_, _ = db.Exec("DELETE FROM players WHERE email = 'unique@example.com'")
+
+	player1 := NewPlayer("unique@example.com", "hashed_password", "avatar_1.png")
+
+	err = player1.Save(db)
+	if err != nil {
 		t.Fatalf("Failed to create first player: %v", err)
 	}
 
-	player2 := &Player{
-		Email:          "unique@example.com", // Same email
-		PasswordDigest: "another_hashed_password",
-		Avatar:         "avatar_2.png",
-		Score:          100,
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
-	}
+	player2 := NewPlayer("unique@example.com", "another_hashed_password", "avatar_2.png")
 
-	err := testDB.Create(player2).Error
-
+	err = player2.Save(db)
 	if err == nil {
 		t.Errorf("Expected an error due to unique email constraint, but got none")
 	}
