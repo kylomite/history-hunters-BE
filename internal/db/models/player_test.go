@@ -25,6 +25,37 @@ func TestPlayerFields(t *testing.T) {
 	}
 }
 
+func TestNewPlayerMissingRequiredFields(t *testing.T) {
+    err := godotenv.Load("../../../.env.test")
+    if err != nil {
+        log.Println("Failed to load .env file:", err)
+    }
+
+    db, err := db.ConnectDB()
+    if err != nil {
+        t.Fatalf("Failed to connect to the database: %v", err)
+    }
+    defer db.Close()
+
+    player1 := NewPlayer("", "hashed_password", "avatar_1.png")
+    err = player1.Save(db)
+    if err == nil {
+        t.Errorf("Expected error when creating player without email, but got none")
+    }
+
+    player2 := NewPlayer("testEmail@example.com", "", "avatar_1.png")
+    err = player2.Save(db)
+    if err == nil {
+        t.Errorf("Expected error when creating player without password, but got none")
+    }
+
+    player3 := NewPlayer("testEmail@example.com", "hashed_password", "")
+    err = player3.Save(db)
+    if err == nil {
+        t.Errorf("Expected error when creating player without avatar, but got none")
+    }
+}
+
 func TestNewPlayerDefaultScore(t *testing.T) {
 	player := NewPlayer("default@example.com", "hashed_password", "avatar_1.png")
 
@@ -44,7 +75,7 @@ func TestNewPlayerEmailUniqueness(t *testing.T) {
 		t.Fatalf("Failed to connect to the database: %v", err)
 	}
 	defer db.Close()
-	
+
 	log.Println("Connecting to DB:", os.Getenv("DB_NAME"))
 
 	_, _ = db.Exec("DELETE FROM players WHERE email = 'unique@example.com'")
