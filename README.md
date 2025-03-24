@@ -1,24 +1,4 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
-<!--
-
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -29,7 +9,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">History Hunters BE</h3>
 
   <p align="center">
     An awesome README template to jumpstart your projects!
@@ -63,6 +43,11 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+      <ul>
+          <li><a href="#accessing-players">Accessing Players</a></li>
+          <li><a href="#accessing-stages">Accessing Stages</a></li>
+          <li><a href="#run">Run</a></li>
+      </ul>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
 </details>
@@ -76,6 +61,38 @@
 
 <!-- GETTING STARTED -->
 ## Getting Started
+To get started with this project, follow the steps below:
+
+1. **Clone the repository**:
+
+```bash
+  git clone https://github.com/your-username/your-repo-name.git
+  cd your-repo-name
+```
+
+2.	**Install dependencies**:
+Make sure you have Go installed, then run the following command to install all necessary dependencies:
+
+```bash
+  go mod tidy
+```
+
+3. **Set up environment variables**:
+Create a .env file in the root of the project and add the necessary environment variables (like your database credentials, etc.):
+
+```sql
+  DB_HOST=localhost
+  DB_PORT=5432
+  DB_NAME=your_db_name
+  DB_USER=your_db_user
+  DB_PASSWORD=your_db_password
+```
+4. **Run database migrations**:
+To set up the database schema, run the following migrations to create the necessary tables:
+
+```bash
+  go run cmd/migrate/main.go
+```
 
 ### Prerequisites
 
@@ -108,12 +125,14 @@ This is application is run on go version 1.24.0.
 ### Run
 
 To start a local HTTP server you can run this command in your terminal.
+
 ```bash
-go run cmd/api/main.go
+  go run cmd/api/main.go
 ```
 You will see this message logged in the terminal if this step is successful.
+
 ```bash
-Server is running on port 8080
+  Server is running on port 8080
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -123,6 +142,8 @@ Server is running on port 8080
 <!-- USAGE EXAMPLES -->
 ## Usage
 ### Accessing Players
+
+### Accessing Stages
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
