@@ -48,6 +48,7 @@
           <li><a href="#accessing-stages">Accessing Stages</a></li>
           <li><a href="#accessing-player-sessions">Accessing Player Sessions</a></li>
           <li><a href="#accessing-questions">Accessing Questions</a></li>
+          <li><a href="#accessing-Answers">Accessing Answers</a></li>
       </ul>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -149,6 +150,8 @@ You will see this message logged in the terminal if this step is successful.
 ### Accessing Player Sessions
 
 ### Accessing Questions
+
+### Accessing Answers
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
