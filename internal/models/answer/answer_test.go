@@ -73,8 +73,8 @@ func TestAnswerFields(t *testing.T) {
 		t.Errorf("Expected question_id to be %d, got %d", question.ID, answer.QuestionID)
 	}
 
-	if answer.Text != "Paris" {
-		t.Errorf("Expected text to be 'Paris', got %s", answer.Text)
+	if answer.AnswerText != "Paris" {
+		t.Errorf("Expected text to be 'Paris', got %s", answer.AnswerText)
 	}
 
 	if !answer.Correct {
