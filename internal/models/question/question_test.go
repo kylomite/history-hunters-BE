@@ -57,7 +57,7 @@ func TestQuestionFields(t *testing.T) {
 		t.Fatalf("Error saving player session: %v", err)
 	}
 
-	question := NewQuestion(stage.ID, "What is the capital of France?")
+	question := NewQuestion(playerSession.ID, "What is the capital of France?")
 
 
 	err = question.Save(db)
