@@ -1,10 +1,7 @@
-package models
+package stage
 
 import (
-	// "database/sql"
-	// "errors"
 	"testing"
-	// "time"
 	"log"
 
 
@@ -29,7 +26,7 @@ func TestStageFields(t *testing.T) {
 }
 
 func TestStageInvalidFields(t *testing.T) {
-	err := godotenv.Load("../../../../.env.test")
+	err := godotenv.Load("../../../.env.test")
 	if err != nil {
 		log.Println("Failed to load .env file:", err)
 	}

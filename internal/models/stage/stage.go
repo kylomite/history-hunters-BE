@@ -1,4 +1,4 @@
-package models
+package stage
 
 import (
 	"database/sql"
@@ -46,4 +46,10 @@ func (s *Stage) Save(db *sql.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (s *Stage) Delete(db *sql.DB) error {
+    query := `DELETE FROM stages WHERE id = $1`
+    _, err := db.Exec(query, s.ID)
+    return err
 }

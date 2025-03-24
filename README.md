@@ -145,6 +145,8 @@ You will see this message logged in the terminal if this step is successful.
 
 ### Accessing Stages
 
+### Accessing Player Sessions
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 

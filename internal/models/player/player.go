@@ -1,4 +1,4 @@
-package models
+package player
 
 import (
 	"database/sql"
@@ -61,4 +61,10 @@ func EmailExists(db *sql.DB, email string) (bool, error) {
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (p *Player) Delete(db *sql.DB) error {
+    query := `DELETE FROM players WHERE id = $1`
+    _, err := db.Exec(query, p.ID)
+    return err
 }
