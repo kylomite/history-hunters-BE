@@ -12,7 +12,7 @@ func TestPlayerFields(t *testing.T) {
 		ID:             1,
 		Email:          "testEmail@example.com",
 		PasswordDigest: "hashed_password",
-		Avatar:         "/assets/avatar_imgs/avatar_1.png",
+		Avatar:         "avatar_1.png",
 		Score:          0,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
@@ -29,12 +29,12 @@ func TestPlayerFields(t *testing.T) {
 	}
 
 	// Test avatar path
-	if p.Avatar != "/assets/avatar_imgs/avatar_1.png" {
-		t.Errorf("Expected avatar to be /assets/avatar_imgs/avatar_1.png, got %s", p.Avatar)
+	if p.Avatar != "avatar_1.png" {
+		t.Errorf("Expected avatar to be png, got %s", p.Avatar)
 	}
 }
 func TestNewPlayerDefaultScore(t *testing.T) {
-	player, err := NewPlayer("test@example.com", "hashed_password", "/assets/avatar_imgs/avatar_1.png")
+	player, err := NewPlayer("test@example.com", "hashed_password", "avatar_1.png")
 	if err != nil {
 		t.Fatalf("failed to create player: %v", err)
 	}
@@ -51,7 +51,7 @@ func TestNewPlayerEmailUniqueness (t *testing.T) {
 	player1 := &Player{
 		Email:          "unique@example.com",
 		PasswordDigest: "hashed_password",
-		Avatar:         "/assets/avatar_imgs/avatar_1.png",
+		Avatar:         "avatar_1.png",
 		Score:          0,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
@@ -64,7 +64,7 @@ func TestNewPlayerEmailUniqueness (t *testing.T) {
 	player2 := &Player{
 		Email:          "unique@example.com", // Same email
 		PasswordDigest: "another_hashed_password",
-		Avatar:         "/assets/avatar_imgs/avatar_2.png",
+		Avatar:         "avatar_2.png",
 		Score:          100,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
