@@ -1,11 +1,15 @@
 package models
 
 import (
-	"database/sql"
+	"fmt"
 	"log"
 	"testing"
+	"time"
 
 	"historyHunters/internal/db"
+	"historyHunters/internal/models/player"
+	"historyHunters/internal/models/stage"
+
 	"github.com/joho/godotenv"
 )
 
@@ -21,7 +25,30 @@ func TestPlayerSessionFields(t *testing.T) {
 	}
 	defer db.Close()
 
-	playerSession := NewPlayerSession(1, 1, 3)
+	playerEmail := fmt.Sprintf("test+%d@example.com", time.Now().UnixNano())
+	player := &player.Player{
+		Email:          playerEmail,
+		PasswordDigest: "hashedpassword",
+		Avatar:         "avatar.png",
+	}
+
+	err = player.Save(db)
+	if err != nil {
+		t.Fatalf("Error saving player: %v", err)
+	}
+
+	stageTitle := fmt.Sprintf("Test Stage %d", time.Now().UnixNano())
+	stage := &stage.Stage{
+		Title: stageTitle,
+		BackgroundImg: "background.png",
+		Difficulty: 3,
+	}
+	err = stage.Save(db)
+	if err != nil {
+		t.Fatalf("Error saving stage: %v", err)
+	}
+
+	playerSession := NewPlayerSession(player.ID, stage.ID, 3)
 
 	if playerSession.PlayerID == 0 {
 		t.Errorf("Expected player_id to be set, got %d", playerSession.PlayerID)
@@ -38,6 +65,21 @@ func TestPlayerSessionFields(t *testing.T) {
 	err = playerSession.Save(db)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
+	}
+	
+	err = player.Delete(db)
+	if err != nil {
+		t.Errorf("Error deleting player: %v", err)
+	}
+
+	err = stage.Delete(db)
+	if err != nil {
+		t.Errorf("Error deleting stage: %v", err)
+	}
+
+	err = playerSession.Delete(db)
+	if err != nil {
+		t.Errorf("Error deleting player session: %v", err)
 	}
 }
 

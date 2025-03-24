@@ -2,72 +2,54 @@ package models
 
 import (
 	"database/sql"
-	"log"
-	"testing"
-	"historyHunters/internal/db"
-	"github.com/joho/godotenv"
+	"errors"
+	"time"
 )
 
-func TestPlayerSessionFields(t *testing.T) {
-	err := godotenv.Load("../../../.env.test")
-	if err != nil {
-		log.Println("Failed to load .env file:", err)
-	}
+type PlayerSession struct {
+	ID        int
+	PlayerID  int
+	StageID   int
+	Lives     int
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
 
-	db, err := db.ConnectDB()
-	if err != nil {
-		t.Fatalf("Failed to connect to the database: %v", err)
-	}
-	defer db.Close()
-
-	// Test valid player session
-	playerSession := NewPlayerSession(1, 1, 3)
-
-	if playerSession.PlayerID == 0 {
-		t.Errorf("Expected player_id to be set, got %d", playerSession.PlayerID)
-	}
-
-	if playerSession.StageID == 0 {
-		t.Errorf("Expected stage_id to be set, got %d", playerSession.StageID)
-	}
-
-	if playerSession.Lives <= 0 {
-		t.Errorf("Expected lives to be greater than 0, got %d", playerSession.Lives)
-	}
-
-	err = playerSession.Save(db)
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
+func NewPlayerSession(playerID, stageID, lives int) *PlayerSession {
+	return &PlayerSession{
+		PlayerID:  playerID,
+		StageID:   stageID,
+		Lives:     lives,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 }
 
-func TestPlayerSessionInvalidFields(t *testing.T) {
-	err := godotenv.Load("../../../.env.test")
+func (ps *PlayerSession) Save(db *sql.DB) error {
+	if ps.PlayerID == 0 {
+		return errors.New("player_id is required")
+	}
+	if ps.StageID == 0 {
+		return errors.New("stage_id is required")
+	}
+	if ps.Lives <= 0 {
+		return errors.New("lives must be greater than 0")
+	}
+
+	query := `
+		INSERT INTO player_sessions (player_id, stage_id, lives, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id;
+	`
+	err := db.QueryRow(query, ps.PlayerID, ps.StageID, ps.Lives, ps.CreatedAt, ps.UpdatedAt).Scan(&ps.ID)
 	if err != nil {
-		log.Println("Failed to load .env file:", err)
+		return err
 	}
+	return nil
+}
 
-	db, err := db.ConnectDB()
-	if err != nil {
-		t.Fatalf("Failed to connect to the database: %v", err)
-	}
-	defer db.Close()
-
-	session1 := NewPlayerSession(0, 1, 3)
-	err = session1.Save(db)
-	if err == nil || err.Error() != "player_id is required" {
-		t.Errorf("Expected error 'player_id is required', got %v", err)
-	}
-
-	session2 := NewPlayerSession(1, 0, 3)
-	err = session2.Save(db)
-	if err == nil || err.Error() != "stage_id is required" {
-		t.Errorf("Expected error 'stage_id is required', got %v", err)
-	}
-
-	session3 := NewPlayerSession(1, 1, 0)
-	err = session3.Save(db)
-	if err == nil || err.Error() != "lives must be greater than 0" {
-		t.Errorf("Expected error 'lives must be greater than 0', got %v", err)
-	}
+func (ps *PlayerSession) Delete(db *sql.DB) error {
+    query := `DELETE FROM player_sessions WHERE id = $1`
+    _, err := db.Exec(query, ps.ID)
+    return err
 }

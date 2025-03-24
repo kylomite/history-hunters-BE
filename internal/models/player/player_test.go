@@ -1,4 +1,4 @@
-package models
+package player
 
 import (
 	"log"

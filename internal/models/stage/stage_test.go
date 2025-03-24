@@ -1,10 +1,7 @@
-package models
+package stage
 
 import (
-	// "database/sql"
-	// "errors"
 	"testing"
-	// "time"
 	"log"
 
 
