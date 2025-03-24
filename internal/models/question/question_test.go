@@ -73,8 +73,8 @@ func TestQuestionFields(t *testing.T) {
 		t.Errorf("Expected player_session_id to be %d, got %d", playerSession.ID, question.PlayerSessionID)
 	}
 
-	if question.Text != "What is the capital of France?" {
-		t.Errorf("Expected text to be 'What is the capital of France?', got %s", question.Text)
+	if question.QuestionText != "What is the capital of France?" {
+		t.Errorf("Expected text to be 'What is the capital of France?', got %s", question.QuestionText)
 	}
 
 	err = player.Delete(db)
