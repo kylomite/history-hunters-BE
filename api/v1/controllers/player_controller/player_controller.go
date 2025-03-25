@@ -23,7 +23,6 @@ func GetAllPlayers(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// Get player by ID
 func GetPlayerByID(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := chi.URLParam(r, "id")
@@ -78,6 +77,12 @@ func DeletePlayer(db *sql.DB) http.HandlerFunc {
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
+
+		player, err := player.FindPlayerByID(db, id)
+		if err != nil {
+			http.Error(w, "Player not found", http.StatusNotFound)
 			return
 		}
 

@@ -77,10 +77,10 @@ func TestQuestionFields(t *testing.T) {
 		t.Errorf("Expected text to be 'What is the capital of France?', got %s", question.QuestionText)
 	}
 
-	err = player.Delete(db)
-	if err != nil {
-		t.Errorf("Error deleting player: %v", err)
-	}
+	err = player.DeletePlayer(db, player.ID)
+    if err != nil {
+        t.Fatalf("Error deleting player: %v", err)
+    }
 
 	err = stage.Delete(db)
 	if err != nil {

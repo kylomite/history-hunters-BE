@@ -161,14 +161,13 @@ func TestDeletePlayer(t *testing.T) {
     db := SetupTestDB(t)
     defer db.Close()
 
-    // Save a player first
     player := NewPlayer("deletePlayer@example.com", "hashed_password", "avatar.png")
     err := player.Save(db)
     if err != nil {
         t.Fatalf("Error saving player: %v", err)
     }
 
-    err = DeletePlayer(db, player.ID)
+    err = player.DeletePlayer(db, player.ID)
     if err != nil {
         t.Fatalf("Error deleting player: %v", err)
     }

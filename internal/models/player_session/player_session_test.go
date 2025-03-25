@@ -25,20 +25,13 @@ func TestPlayerSessionFields(t *testing.T) {
     }
     defer db.Close()
 
-    // Create player
-    playerEmail := fmt.Sprintf("test+%d@example.com", time.Now().UnixNano())
-    player := &player.Player{
-        Email:          playerEmail,
-        PasswordDigest: "hashedpassword",
-        Avatar:         "avatar.png",
-    }
+	player := player.NewPlayer("deletePlayer@example.com", "hashed_password", "avatar.png")
 
     err = player.Save(db)
     if err != nil {
         t.Fatalf("Error saving player: %v", err)
     }
 
-    // Create stage
     stageTitle := fmt.Sprintf("Test Stage %d", time.Now().UnixNano())
     stage := &stage.Stage{
         Title:        stageTitle,
@@ -70,10 +63,9 @@ func TestPlayerSessionFields(t *testing.T) {
         t.Errorf("Expected no error, got %v", err)
     }
 
-    // Now delete the player
     err = player.DeletePlayer(db, player.ID)
     if err != nil {
-        t.Errorf("Error deleting player: %v", err)
+        t.Fatalf("Error deleting player: %v", err)
     }
 
     err = stage.Delete(db)

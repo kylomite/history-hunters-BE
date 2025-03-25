@@ -95,7 +95,7 @@ func (p *Player) Update(db *sql.DB) error {
 	return err
 }
 
-func DeletePlayer(db *sql.DB, id int) error {
+func (p *Player) DeletePlayer(db *sql.DB, id int) error {
 	_, err := db.Exec(`DELETE FROM players WHERE id = $1`, id)
 	return err
 }
