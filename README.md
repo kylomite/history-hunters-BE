@@ -144,7 +144,7 @@ You will see this message logged in the terminal if this step is successful.
 <!-- USAGE EXAMPLES -->
 ## Usage
 ### Accessing Players
-<!-- - **Create a Player**
+#### **Create a Player**
 **Endpoint**: `POST /players`
 - Creates a new player.
 - Request Body
@@ -155,16 +155,100 @@ You will see this message logged in the terminal if this step is successful.
   "avatar": "avatar_image_url"
 }
 ```
-Response
+- Response
  - **Status**: `201 Created`
  - **Body**:
  ```json
  {
-  "email": "player@example.com",
-  "password_digest": "hashed_password",
-  "avatar": "avatar_image_url"
+    "id": 4,
+    "email": "player@example.com",
+    "password_digest": "hashed_password",
+    "avatar": "avatar_image_url",
+    "score": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z"
 }
-  ``` -->
+  ```
+
+#### **Get All Players**
+**Endpoint**: `GET /players`
+- Retrieves a list of all players.
+
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+[
+    {
+        "id": 1,
+        "email": "player1@example.com",
+        "password_digest": "hashed_password",
+        "avatar": "avatar_image_url",
+        "score": 10,
+        "created_at": "2025-01-01T00:00:00Z",
+        "updated_at": "2025-01-01T00:00:00Z"
+    },
+    {
+        "id": 2,
+        "email": "player2@example.com",
+        "password_digest": "hashed_password",
+        "avatar": "avatar_image_url",
+        "score": 20,
+        "created_at": "2025-01-01T00:00:00Z",
+        "updated_at": "2025-01-01T00:00:00Z"
+    }
+]
+  ```
+
+#### **Get One Player**
+**Endpoint**: `GET /players{id}`
+- Retrieves a single player's details by id.
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+{
+      "id": 1,
+      "email": "player1@example.com",
+      "password_digest": "hashed_password",
+      "avatar": "avatar_image_url",
+      "score": 10,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+  }
+```
+
+#### **Update a Player**
+**Endpoint**: `PATCH /player{id}`
+- Updates a player’s details by id.
+- Request Body
+```json
+{
+  "email": "updated_player@example.com",
+  "password_digest": "new_hashed_password",
+  "avatar": "new_avatar_image_url",
+  "score": 50
+}
+```
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+ {
+   "id": 1,
+   "email": "updated_player@example.com",
+   "password_digest": "new_hashed_password",
+   "avatar": "new_avatar_image_url",
+   "score": 50,
+   "created_at": "2025-01-01T00:00:00Z",
+   "updated_at": "2025-01-01T00:00:00Z"
+}
+  ```
+#### **Delete a Player**
+**Endpoint**: `DELETE /players/{id}`
+- Deletes a player by id.
+- Response
+ - **Status**: `204 No Content`
 
 ### Accessing Stages
 
