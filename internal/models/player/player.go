@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type Player struct {
@@ -16,7 +18,26 @@ type Player struct {
 	UpdatedAt      time.Time `json:"updated_at"`
 }
 
+func NewPlayer(email, passwordDigest, avatar string) *Player {
+	return &Player{
+		Email:          email,
+		PasswordDigest: passwordDigest,
+		Avatar:         avatar,
+		Score:          0, // Default score to 0
+	}
+}
+
 func (p *Player) Save(db *sql.DB) error {
+	if p.Email == "" {
+		return errors.New("email is required")
+	}
+	if p.PasswordDigest == "" {
+		return errors.New("password is required")
+	}
+	if p.Avatar == "" {
+		return errors.New("avatar is required")
+	}
+
 	query := `
 		INSERT INTO players (email, password_digest, avatar, score, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
@@ -24,6 +45,9 @@ func (p *Player) Save(db *sql.DB) error {
 	`
 	err := db.QueryRow(query, p.Email, p.PasswordDigest, p.Avatar, p.Score, time.Now(), time.Now()).Scan(&p.ID)
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+			return errors.New("email already exists")
+		}
 		return err
 	}
 	return nil

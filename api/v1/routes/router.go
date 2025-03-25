@@ -22,10 +22,10 @@ func NewRouter(db *sql.DB) *chi.Mux {
 	})
 
 	router.Route("/players", func(r chi.Router) {
-		r.Get("/", controller.GetAllPlayers(db))  
-		r.Get("/{id}", controller.GetPlayerByID(db))
-		r.Patch("/{id}", controller.UpdatePlayer(db))
-		r.Delete("/{id}", controller.DeletePlayer(db))
+		r.Get("/", player_controller.GetAllPlayers(db))  
+		r.Get("/{id}", player_controller.GetPlayerByID(db))
+		r.Patch("/{id}", player_controller.UpdatePlayer(db))
+		r.Delete("/{id}", player_controller.DeletePlayer(db))
 	})
 
 	return router
