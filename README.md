@@ -360,6 +360,75 @@ You will see this message logged in the terminal if this step is successful.
  - **Status**: `204 No Content`
 
 ### Accessing Player Sessions
+#### **Create a Stage**
+**Endpoint**: `POST /stages`
+- Creates a new stage.
+- Request Body
+```json
+{
+    "title": "Hard Stage",
+    "background_img": "stage1.png",
+    "difficulty": 3
+}
+```
+- Response
+ - **Status**: `201 Created`
+ - **Body**:
+ ```json
+{
+    "id": 9,
+    "title": "Extra Hard Stage",
+    "background_img": "stage1.png",
+    "difficulty": 3,
+    "created_at": "2025-03-25T14:03:20.301018-04:00",
+    "updated_at": "2025-03-25T14:03:20.301018-04:00"
+}
+  ```
+
+#### **Get All of a PLayer's sessions**
+
+#### **Get One Player Session**
+**Endpoint**: `GET /players/{id}/player_session/{session_id}`
+- Retrieves a single session details of a player by session id.
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+{
+    "id": 7,
+    "player_id": 1,
+    "stage_id": 2,
+    "lives": 2,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "2025-03-25T16:57:39.69573Z"
+}
+```
+
+#### **Update a Player's Session**
+**Endpoint**: `PATCH /players/{id}/player_session/{session_id}`
+- Updates a player’s session details by id.
+- Request Body
+```json
+{
+  "player_id": 1,
+  "stage_id": 2,
+  "lives": 3
+}
+```
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+{
+    "id": 7,
+    "player_id": 1,
+    "stage_id": 2,
+    "lives": 3,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "2025-03-25T17:54:27.705329Z"
+}
+  ```
+#### **Delete a Player's Session**
 
 ### Accessing Questions
 
