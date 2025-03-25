@@ -114,4 +114,3 @@ func (ps *PlayerSession) Delete(db *sql.DB) error {
 	_, err := db.Exec(query, ps.ID)
 	return err
 }
-
