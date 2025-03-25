@@ -6,6 +6,7 @@ import (
 
 	"historyHunters/api/v1/controllers/stage_controller"
 	"historyHunters/api/v1/controllers/player_controller"
+	"historyHunters/api/v1/controllers/player_session_controller"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -28,6 +29,12 @@ func NewRouter(db *sql.DB) *chi.Mux {
 		r.Get("/{id}", player_controller.GetPlayerByID(db))
 		r.Patch("/{id}", player_controller.UpdatePlayer(db))
 		r.Delete("/{id}", player_controller.DeletePlayer(db))
+
+		r.Route("/{id}/player_sessions", func(r chi.Router) {
+			r.Post("/", player_session_controller.CreatePlayerSession(db))
+			r.Get("/{session_id}", player_session_controller.GetPlayerSessionByID(db))
+			r.Patch("/{session_id}", player_session_controller.UpdatePlayerSession(db))
+		})
 	})
 
 	router.Route("/stages", func(r chi.Router) {
