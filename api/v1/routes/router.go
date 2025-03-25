@@ -1,12 +1,14 @@
 package routes
 
 import (
+	"database/sql"
 	"net/http"
 
+	"historyHunters/api/v1/controllers/player_controller"
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter() *chi.Mux {
+func NewRouter(db *sql.DB) *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +19,13 @@ func NewRouter() *chi.Mux {
 	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Server is healthy"))
+	})
+
+	router.Route("/players", func(r chi.Router) {
+		r.Get("/", controller.GetAllPlayers(db))  
+		r.Get("/{id}", controller.GetPlayerByID(db))
+		r.Patch("/{id}", controller.UpdatePlayer(db))
+		r.Delete("/{id}", controller.DeletePlayer(db))
 	})
 
 	return router
