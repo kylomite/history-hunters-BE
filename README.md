@@ -13,15 +13,6 @@
 
   <p align="center">
     An awesome README template to jumpstart your projects!
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -251,6 +242,122 @@ You will see this message logged in the terminal if this step is successful.
  - **Status**: `204 No Content`
 
 ### Accessing Stages
+
+#### **Create a Stage**
+**Endpoint**: `POST /stages`
+- Creates a new stage.
+- Request Body
+```json
+{
+    "title": "Hard Stage",
+    "background_img": "stage1.png",
+    "difficulty": 3
+}
+```
+- Response
+ - **Status**: `201 Created`
+ - **Body**:
+ ```json
+{
+    "id": 9,
+    "title": "Extra Hard Stage",
+    "background_img": "stage1.png",
+    "difficulty": 3,
+    "created_at": "2025-03-25T14:03:20.301018-04:00",
+    "updated_at": "2025-03-25T14:03:20.301018-04:00"
+}
+  ```
+
+#### **Get All Stages**
+**Endpoint**: `GET /stages`
+- Retrieves a list of all stages.
+
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+[
+    {
+        "id": 1,
+        "title": "Easy Stage",
+        "background_img": "stage1.png",
+        "difficulty": 1,
+        "created_at": "2025-03-24T16:00:58.00178Z",
+        "updated_at": "2025-03-24T16:00:58.00178Z"
+    },
+    {
+        "id": 2,
+        "title": "Medium Stage",
+        "background_img": "stage2.png",
+        "difficulty": 2,
+        "created_at": "2025-03-24T16:00:58.00178Z",
+        "updated_at": "2025-03-24T16:00:58.00178Z"
+    },
+    {
+        "id": 3,
+        "title": "Hard Stage",
+        "background_img": "stage2.png",
+        "difficulty": 3,
+        "created_at": "2025-03-24T16:00:58.00178Z",
+        "updated_at": "2025-03-24T16:00:58.00178Z"
+    },
+    {
+        "id": 4,
+        "title": "Edited Stage",
+        "background_img": "stage1.png",
+        "difficulty": 1,
+        "created_at": "2025-03-24T16:02:01.842038Z",
+        "updated_at": "2025-03-25T14:01:02.950661Z"
+    }
+]
+  ```
+
+#### **Get One stage**
+**Endpoint**: `GET /stage{id}`
+- Retrieves a single stage's details by id.
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+{
+        "id": 3,
+        "title": "Hard Stage",
+        "background_img": "stage2.png",
+        "difficulty": 3,
+        "created_at": "2025-03-24T16:00:58.00178Z",
+        "updated_at": "2025-03-24T16:00:58.00178Z"
+    }
+```
+
+#### **Update a Stage**
+**Endpoint**: `PATCH /stage{id}`
+- Updates a stage’s details by id.
+- Request Body
+```json
+{
+    "title": "Edited Stage",
+    "background_img": "stage1.png",
+    "difficulty": 1
+}
+```
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+{
+    "id": 4,
+    "title": "Edited Stage",
+    "background_img": "stage1.png",
+    "difficulty": 1,
+    "created_at": "2025-03-24T16:02:01.842038Z",
+    "updated_at": "2025-03-25T14:01:02.950661Z"
+}
+  ```
+#### **Delete a Stage**
+**Endpoint**: `DELETE /Stage/{id}`
+- Deletes a Stage by id.
+- Response
+ - **Status**: `204 No Content`
 
 ### Accessing Player Sessions
 
