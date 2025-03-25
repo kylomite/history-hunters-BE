@@ -39,19 +39,19 @@ func TestQuestionFields(t *testing.T) {
 	}
 
 
-	stage := &stage.Stage{
+	testStage := &stage.Stage{
 		Title:         fmt.Sprintf("Test Stage %d", time.Now().UnixNano()),
 		BackgroundImg: "background.png",
 		Difficulty:    3,
 	}
 
-	err = stage.Save(db)
+	err = testStage.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving stage: %v", err)
 	}
 
 
-	playerSession := player_session.NewPlayerSession(player.ID, stage.ID, 3)
+	playerSession := player_session.NewPlayerSession(player.ID, testStage.ID, 3)
 	err = playerSession.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving player session: %v", err)
@@ -82,7 +82,7 @@ func TestQuestionFields(t *testing.T) {
         t.Fatalf("Error deleting player: %v", err)
     }
 
-	err = stage.Delete(db)
+	err = stage.DeleteStage(db, testStage.ID)
 	if err != nil {
 		t.Errorf("Error deleting stage: %v", err)
 	}

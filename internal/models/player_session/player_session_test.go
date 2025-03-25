@@ -33,18 +33,18 @@ func TestPlayerSessionFields(t *testing.T) {
     }
 
     stageTitle := fmt.Sprintf("Test Stage %d", time.Now().UnixNano())
-    stage := &stage.Stage{
+    testStage := &stage.Stage{
         Title:        stageTitle,
         BackgroundImg: "background.png",
         Difficulty:   3,
     }
 
-    err = stage.Save(db)
+    err = testStage.Save(db)
     if err != nil {
         t.Fatalf("Error saving stage: %v", err)
     }
 
-    playerSession := NewPlayerSession(player.ID, stage.ID, 3)
+    playerSession := NewPlayerSession(player.ID, testStage.ID, 3)
 
     if playerSession.PlayerID == 0 {
         t.Errorf("Expected player_id to be set, got %d", playerSession.PlayerID)
@@ -68,10 +68,10 @@ func TestPlayerSessionFields(t *testing.T) {
         t.Fatalf("Error deleting player: %v", err)
     }
 
-    err = stage.Delete(db)
-    if err != nil {
-        t.Errorf("Error deleting stage: %v", err)
-    }
+    err = stage.DeleteStage(db, testStage.ID)
+	if err != nil {
+		t.Errorf("Error deleting stage: %v", err)
+	}
 
     err = playerSession.Delete(db)
     if err != nil {
