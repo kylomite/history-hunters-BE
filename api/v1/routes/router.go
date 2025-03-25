@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
+	"historyHunters/api/v1/controllers/stage_controller"
 	"historyHunters/api/v1/controllers/player_controller"
 	"github.com/go-chi/chi/v5"
 )

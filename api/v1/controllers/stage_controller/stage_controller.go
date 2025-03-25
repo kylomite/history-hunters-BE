@@ -1,124 +1,128 @@
 package stage_controller
 
 import (
-	"bytes"
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"strconv"
-	"testing"
 
-	"historyHunters/internal/db"
 	"historyHunters/internal/models/stage"
-
-	"github.com/joho/godotenv"
-	"github.com/stretchr/testify/assert"
+	"github.com/go-chi/chi/v5"
 )
 
-func setupTestDB(t *testing.T) *sql.DB {
-	err := godotenv.Load("../../../.env.test")
-	assert.NoError(t, err)
+func CreateStage(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Title         string `json:"title"`
+			BackgroundImg string `json:"background_img"`
+			Difficulty    int    `json:"difficulty"`
+		}
 
-	testDB, err := db.ConnectDB()
-	assert.NoError(t, err)
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
 
-	_, err = testDB.Exec("TRUNCATE stages RESTART IDENTITY CASCADE")
-	assert.NoError(t, err)
+		newStage := stage.NewStage(req.Title, req.BackgroundImg, req.Difficulty)
 
-	return testDB
+		if err := newStage.Save(db); err != nil {
+			http.Error(w, "Failed to create stage: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(newStage)
+	}
 }
 
-func TestCreateStage(t *testing.T) {
-	testDB := setupTestDB(t)
-	defer testDB.Close()
+func GetAllStages(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		stages, err := stage.GetAllStages(db)
+		if err != nil {
+			http.Error(w, "Failed to fetch stages", http.StatusInternalServerError)
+			return
+		}
 
-	handler := stage_controller.CreateStage(testDB)
-
-	reqBody := `{"title": "Test Stage", "background_img": "bg1.png", "difficulty": 3}`
-	req := httptest.NewRequest("POST", "/stages", bytes.NewBuffer([]byte(reqBody)))
-	req.Header.Set("Content-Type", "application/json")
-	resp := httptest.NewRecorder()
-
-	handler.ServeHTTP(resp, req)
-
-	assert.Equal(t, http.StatusCreated, resp.Code)
-
-	var createdStage stage.Stage
-	err := json.NewDecoder(resp.Body).Decode(&createdStage)
-	assert.NoError(t, err)
-
-	assert.Equal(t, "Test Stage", createdStage.Title)
-	assert.Equal(t, "bg1.png", createdStage.BackgroundImg)
-	assert.Equal(t, 3, createdStage.Difficulty)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(stages)
+	}
 }
 
-func TestGetAllStages(t *testing.T) {
-	testDB := setupTestDB(t)
-	defer testDB.Close()
+func GetStageByID(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := chi.URLParam(r, "id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid stage ID", http.StatusBadRequest)
+			return
+		}
 
-	stage1 := stage.NewStage("Stage 1", "bg1.png", 2)
-	assert.NoError(t, stage1.Save(testDB))
+		stage, err := stage.FindStageByID(db, id)
+		if err != nil {
+			http.Error(w, "Stage not found", http.StatusNotFound)
+			return
+		}
 
-	stage2 := stage.NewStage("Stage 2", "bg2.png", 4)
-	assert.NoError(t, stage2.Save(testDB))
-
-	handler := stage_controller.GetAllStages(testDB)
-
-	req := httptest.NewRequest("GET", "/stages", nil)
-	resp := httptest.NewRecorder()
-
-	handler.ServeHTTP(resp, req)
-
-	assert.Equal(t, http.StatusOK, resp.Code)
-
-	var stages []stage.Stage
-	err := json.NewDecoder(resp.Body).Decode(&stages)
-	assert.NoError(t, err)
-
-	assert.Len(t, stages, 2)
-	assert.Equal(t, "Stage 1", stages[0].Title)
-	assert.Equal(t, "Stage 2", stages[1].Title)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(stage)
+	}
 }
 
-func TestGetStageByID(t *testing.T) {
-	testDB := setupTestDB(t)
-	defer testDB.Close()
+func UpdateStage(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := chi.URLParam(r, "id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
 
-	stage := stage.NewStage("Stage 1", "bg1.png", 2)
-	assert.NoError(t, stage.Save(testDB))
+		var req struct {
+			Title         string `json:"title"`
+			BackgroundImg string `json:"background_img"`
+			Difficulty    int    `json:"difficulty"`
+		}
 
-	handler := stage_controller.GetStageByID(testDB)
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid input", http.StatusBadRequest)
+			return
+		}
 
-	req := httptest.NewRequest("GET", "/stages/"+strconv.Itoa(stage.ID), nil)
-	resp := httptest.NewRecorder()
+		stage, err := stage.FindStageByID(db, id)
+		if err != nil {
+			http.Error(w, "Stage not found", http.StatusNotFound)
+			return
+		}
 
-	handler.ServeHTTP(resp, req)
+		stage.Title = req.Title
+		stage.BackgroundImg = req.BackgroundImg
+		stage.Difficulty = req.Difficulty
 
-	assert.Equal(t, http.StatusOK, resp.Code)
+		if err := stage.Update(db); err != nil {
+			http.Error(w, "Failed to update stage", http.StatusInternalServerError)
+			return
+		}
 
-	var fetchedStage stage.Stage
-	err := json.NewDecoder(resp.Body).Decode(&fetchedStage)
-	assert.NoError(t, err)
-
-	assert.Equal(t, "Stage 1", fetchedStage.Title)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(stage)
+	}
 }
 
-func TestDeleteStage(t *testing.T) {
-	testDB := setupTestDB(t)
-	defer testDB.Close()
+func DeleteStage(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := chi.URLParam(r, "id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
 
-	stage := stage.NewStage("Stage to Delete", "bg_delete.png", 1)
-	assert.NoError(t, stage.Save(testDB))
+		if err := stage.DeleteStage(db, id); err != nil {
+			http.Error(w, "Failed to delete stage", http.StatusInternalServerError)
+			return
+		}
 
-	handler := stage_controller.DeleteStage(testDB)
-
-	req := httptest.NewRequest("DELETE", "/stages/"+strconv.Itoa(stage.ID), nil)
-	resp := httptest.NewRecorder()
-
-	handler.ServeHTTP(resp, req)
-	assert.Equal(t, http.StatusNoContent, resp.Code)
-
-	_, err := stage.FindStageByID(testDB, stage.ID)
-	assert.Error(t, err)
+		w.WriteHeader(http.StatusNoContent)
+	}
 }
