@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,26 +11,35 @@ import (
 	"syscall"
 	"time"
 
-	"historyHunters/internal/db"
 	"historyHunters/api/v1/routes"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	// ROUTING
-	router := routes.NewRouter()
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
 
-	//SERVER CREATION
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	database, err := db.ConnectDB()
-	if err != nil {
-		log.Fatalf("Failed to connect to DB: %v", err)
-	}
-	defer database.Close()
-
+	router := routes.NewRouter(db)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%s", port),
@@ -39,7 +49,6 @@ func main() {
 		IdleTimeout:  15 * time.Second,
 	}
 
-	//GRACEFUL EXIT
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 

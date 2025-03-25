@@ -101,8 +101,8 @@ func TestAnswerFields(t *testing.T) {
 		t.Errorf("Error deleting stage: %v", err)
 	}
 
-	err = player.Delete(db)
-	if err != nil {
-		t.Errorf("Error deleting player: %v", err)
-	}
+	err = player.DeletePlayer(db, player.ID)
+    if err != nil {
+        t.Fatalf("Error deleting player: %v", err)
+    }
 }
