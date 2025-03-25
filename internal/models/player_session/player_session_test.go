@@ -52,22 +52,22 @@ func createTestPlayerAndStage(t *testing.T, db *sql.DB) (*player.Player, *stage.
 	return testPlayer, testStage
 }
 
-func cleanupTestData(t *testing.T, db *sql.DB, player *player.Player, stage *stage.Stage, session *PlayerSession) {
+func cleanupTestData(t *testing.T, db *sql.DB, player *player.Player, argStage *stage.Stage, session *PlayerSession) {
 	if session != nil {
-		err := session.Delete(db)
-		if err != nil {
-			t.Errorf("Failed to delete player session: %v", err)
+		sessionErr := session.Delete(db)
+		if sessionErr != nil {
+			t.Errorf("Failed to delete player session: %v", sessionErr)
 		}
 	}
 
-	err := player.DeletePlayer(db, player.ID)
-	if err != nil {
-		t.Errorf("Failed to delete player: %v", err)
+	playerErr := player.DeletePlayer(db, player.ID)
+	if playerErr != nil {
+		t.Errorf("Failed to delete player: %v", playerErr)
 	}
 
-	err = stage.DeleteStage(db, stage.ID)
-	if err != nil {
-		t.Errorf("Failed to delete stage: %v", err)
+	stageErr := stage.DeleteStage(db, argStage.ID) 
+	if stageErr != nil {
+		t.Errorf("Failed to delete stage: %v", stageErr)
 	}
 }
 func TestPlayerSessionFields(t *testing.T) {
