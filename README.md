@@ -144,6 +144,27 @@ You will see this message logged in the terminal if this step is successful.
 <!-- USAGE EXAMPLES -->
 ## Usage
 ### Accessing Players
+<!-- - **Create a Player**
+**Endpoint**: `POST /players`
+- Creates a new player.
+- Request Body
+```json
+{
+  "email": "player@example.com",
+  "password_digest": "hashed_password",
+  "avatar": "avatar_image_url"
+}
+```
+Response
+ - **Status**: `201 Created`
+ - **Body**:
+ ```json
+ {
+  "email": "player@example.com",
+  "password_digest": "hashed_password",
+  "avatar": "avatar_image_url"
+}
+  ``` -->
 
 ### Accessing Stages
 

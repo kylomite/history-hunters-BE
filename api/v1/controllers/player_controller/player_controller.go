@@ -10,7 +10,34 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// Get all players
+func CreatePlayer(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var newPlayerRequest struct {
+			Email          string `json:"email"`
+			PasswordDigest string `json:"password_digest"`
+			Avatar         string `json:"avatar"`
+		}
+
+		err := json.NewDecoder(r.Body).Decode(&newPlayerRequest)
+		if err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		player := player.NewPlayer(newPlayerRequest.Email, newPlayerRequest.PasswordDigest, newPlayerRequest.Avatar)
+
+		err = player.Save(db)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(player)
+	}
+}
+
 func GetAllPlayers(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		players, err := player.GetAllPlayers(db)
