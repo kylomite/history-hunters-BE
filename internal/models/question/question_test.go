@@ -110,7 +110,6 @@ func TestFindByID(t *testing.T) {
 	}
 	defer db.Close()
 
-	// Create a player
 	player := &player.Player{
 		Email:          fmt.Sprintf("test+%d@example.com", time.Now().UnixNano()),
 		PasswordDigest: "hashedpassword",
@@ -122,7 +121,6 @@ func TestFindByID(t *testing.T) {
 		t.Fatalf("Error saving player: %v", err)
 	}
 
-	// Create a stage
 	testStage := &stage.Stage{
 		Title:         fmt.Sprintf("Test Stage %d", time.Now().UnixNano()),
 		BackgroundImg: "background.png",
@@ -134,27 +132,23 @@ func TestFindByID(t *testing.T) {
 		t.Fatalf("Error saving stage: %v", err)
 	}
 
-	// Create a player session
 	playerSession := player_session.NewPlayerSession(player.ID, testStage.ID, 3)
 	err = playerSession.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving player session: %v", err)
 	}
 
-	// Create a question
 	question := NewQuestion(playerSession.ID, "What is the capital of France?")
 	err = question.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving question: %v", err)
 	}
 
-	// Test finding the question by ID
 	foundQuestion, err := FindByID(db, question.ID, player.ID)
 	if err != nil {
 		t.Fatalf("Error finding question: %v", err)
 	}
 
-	// Assertions
 	if foundQuestion.ID != question.ID {
 		t.Errorf("Expected ID %d, got %d", question.ID, foundQuestion.ID)
 	}
@@ -167,7 +161,6 @@ func TestFindByID(t *testing.T) {
 		t.Errorf("Expected player_session_id %d, got %d", playerSession.ID, foundQuestion.PlayerSessionID)
 	}
 
-	// Cleanup
 	err = question.Delete(db)
 	if err != nil {
 		t.Errorf("Error deleting question: %v", err)
@@ -201,7 +194,6 @@ func TestUnauthorizedQuestionAccess(t *testing.T) {
 	}
 	defer db.Close()
 
-	// Create player 1
 	player1 := &player.Player{
 		Email:          fmt.Sprintf("player1+%d@example.com", time.Now().UnixNano()),
 		PasswordDigest: "hashedpassword",
@@ -212,7 +204,6 @@ func TestUnauthorizedQuestionAccess(t *testing.T) {
 		t.Fatalf("Error saving player 1: %v", err)
 	}
 
-	// Create player 2
 	player2 := &player.Player{
 		Email:          fmt.Sprintf("player2+%d@example.com", time.Now().UnixNano()),
 		PasswordDigest: "hashedpassword",
@@ -223,7 +214,6 @@ func TestUnauthorizedQuestionAccess(t *testing.T) {
 		t.Fatalf("Error saving player 2: %v", err)
 	}
 
-	// Create stage
 	testStage := &stage.Stage{
 		Title:         "Test Stage",
 		BackgroundImg: "background.png",
@@ -234,28 +224,24 @@ func TestUnauthorizedQuestionAccess(t *testing.T) {
 		t.Fatalf("Error saving stage: %v", err)
 	}
 
-	// Create a player session for player 1
 	session1 := player_session.NewPlayerSession(player1.ID, testStage.ID, 3)
 	err = session1.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving player 1 session: %v", err)
 	}
 
-	// Create a player session for player 2
 	session2 := player_session.NewPlayerSession(player2.ID, testStage.ID, 3)
 	err = session2.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving player 2 session: %v", err)
 	}
 
-	// Create question for player 1's session
 	question := NewQuestion(session1.ID, "What is the capital of France?")
 	err = question.Save(db)
 	if err != nil {
 		t.Fatalf("Error saving question: %v", err)
 	}
 
-	// Attempt to access player 1's question using player 2's ID
 	_, err = FindByID(db, question.ID, player2.ID)
 	if err == nil {
 		t.Fatalf("Expected unauthorized access error, but got nil")
@@ -265,7 +251,6 @@ func TestUnauthorizedQuestionAccess(t *testing.T) {
 		t.Errorf("Expected unauthorized access error, got %v", err)
 	}
 
-	// Cleanup
 	err = question.Delete(db)
 	if err != nil {
 		t.Errorf("Error deleting question: %v", err)
