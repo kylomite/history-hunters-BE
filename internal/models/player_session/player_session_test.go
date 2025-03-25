@@ -14,74 +14,77 @@ import (
 )
 
 func TestPlayerSessionFields(t *testing.T) {
-	err := godotenv.Load("../../../.env.test")
-	if err != nil {
-		log.Println("Failed to load .env file:", err)
-	}
+    err := godotenv.Load("../../../.env.test")
+    if err != nil {
+        log.Println("Failed to load .env file:", err)
+    }
 
-	db, err := db.ConnectDB()
-	if err != nil {
-		t.Fatalf("Failed to connect to the database: %v", err)
-	}
-	defer db.Close()
+    db, err := db.ConnectDB()
+    if err != nil {
+        t.Fatalf("Failed to connect to the database: %v", err)
+    }
+    defer db.Close()
 
-	playerEmail := fmt.Sprintf("test+%d@example.com", time.Now().UnixNano())
-	player := &player.Player{
-		Email:          playerEmail,
-		PasswordDigest: "hashedpassword",
-		Avatar:         "avatar.png",
-	}
+    // Create player
+    playerEmail := fmt.Sprintf("test+%d@example.com", time.Now().UnixNano())
+    player := &player.Player{
+        Email:          playerEmail,
+        PasswordDigest: "hashedpassword",
+        Avatar:         "avatar.png",
+    }
 
-	err = player.Save(db)
-	if err != nil {
-		t.Fatalf("Error saving player: %v", err)
-	}
+    err = player.Save(db)
+    if err != nil {
+        t.Fatalf("Error saving player: %v", err)
+    }
 
-	stageTitle := fmt.Sprintf("Test Stage %d", time.Now().UnixNano())
-	stage := &stage.Stage{
-		Title: stageTitle,
-		BackgroundImg: "background.png",
-		Difficulty: 3,
-	}
-	
-	err = stage.Save(db)
-	if err != nil {
-		t.Fatalf("Error saving stage: %v", err)
-	}
+    // Create stage
+    stageTitle := fmt.Sprintf("Test Stage %d", time.Now().UnixNano())
+    stage := &stage.Stage{
+        Title:        stageTitle,
+        BackgroundImg: "background.png",
+        Difficulty:   3,
+    }
 
-	playerSession := NewPlayerSession(player.ID, stage.ID, 3)
+    err = stage.Save(db)
+    if err != nil {
+        t.Fatalf("Error saving stage: %v", err)
+    }
 
-	if playerSession.PlayerID == 0 {
-		t.Errorf("Expected player_id to be set, got %d", playerSession.PlayerID)
-	}
+    playerSession := NewPlayerSession(player.ID, stage.ID, 3)
 
-	if playerSession.StageID == 0 {
-		t.Errorf("Expected stage_id to be set, got %d", playerSession.StageID)
-	}
+    if playerSession.PlayerID == 0 {
+        t.Errorf("Expected player_id to be set, got %d", playerSession.PlayerID)
+    }
 
-	if playerSession.Lives <= 0 {
-		t.Errorf("Expected lives to be greater than 0, got %d", playerSession.Lives)
-	}
+    if playerSession.StageID == 0 {
+        t.Errorf("Expected stage_id to be set, got %d", playerSession.StageID)
+    }
 
-	err = playerSession.Save(db)
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
+    if playerSession.Lives <= 0 {
+        t.Errorf("Expected lives to be greater than 0, got %d", playerSession.Lives)
+    }
 
-	err = player.Delete(db)
-	if err != nil {
-		t.Errorf("Error deleting player: %v", err)
-	}
+    err = playerSession.Save(db)
+    if err != nil {
+        t.Errorf("Expected no error, got %v", err)
+    }
 
-	err = stage.Delete(db)
-	if err != nil {
-		t.Errorf("Error deleting stage: %v", err)
-	}
+    // Now delete the player
+    err = player.DeletePlayer(db, player.ID)
+    if err != nil {
+        t.Errorf("Error deleting player: %v", err)
+    }
 
-	err = playerSession.Delete(db)
-	if err != nil {
-		t.Errorf("Error deleting player session: %v", err)
-	}
+    err = stage.Delete(db)
+    if err != nil {
+        t.Errorf("Error deleting stage: %v", err)
+    }
+
+    err = playerSession.Delete(db)
+    if err != nil {
+        t.Errorf("Error deleting player session: %v", err)
+    }
 }
 
 func TestPlayerSessionInvalidFields(t *testing.T) {
@@ -102,11 +105,13 @@ func TestPlayerSessionInvalidFields(t *testing.T) {
 		t.Errorf("Expected error 'player_id is required', got %v", err)
 	}
 
+
 	session2 := NewPlayerSession(1, 0, 3)
 	err = session2.Save(db)
 	if err == nil || err.Error() != "stage_id is required" {
 		t.Errorf("Expected error 'stage_id is required', got %v", err)
 	}
+
 
 	session3 := NewPlayerSession(1, 1, 0)
 	err = session3.Save(db)

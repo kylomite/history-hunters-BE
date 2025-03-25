@@ -23,7 +23,7 @@ func NewPlayer(email, passwordDigest, avatar string) *Player {
 		Email:          email,
 		PasswordDigest: passwordDigest,
 		Avatar:         avatar,
-		Score:          0, // Default score to 0
+		Score:          0,
 	}
 }
 

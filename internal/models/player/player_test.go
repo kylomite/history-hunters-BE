@@ -88,3 +88,97 @@ func TestNewPlayerEmailUniqueness(t *testing.T) {
 		t.Errorf("Expected 'email already exists' error, got %v", err)
 	}
 }
+
+func TestSavePlayer(t *testing.T) {
+    db := SetupTestDB(t)
+    defer db.Close()
+
+    player := NewPlayer("newPlayer@example.com", "hashed_password", "avatar.png")
+    err := player.Save(db)
+    if err != nil {
+        t.Fatalf("Error saving player: %v", err)
+    }
+
+    if player.ID == 0 {
+        t.Errorf("Expected player ID to be set, got %d", player.ID)
+    }
+
+    savedPlayer, err := FindPlayerByID(db, player.ID)
+    if err != nil {
+        t.Fatalf("Error finding saved player: %v", err)
+    }
+
+    assert.Equal(t, player.Email, savedPlayer.Email)
+    assert.Equal(t, player.Avatar, savedPlayer.Avatar)
+}
+
+func TestFindPlayerByID(t *testing.T) {
+    db := SetupTestDB(t)
+    defer db.Close()
+
+    player := NewPlayer("findPlayer@example.com", "hashed_password", "avatar.png")
+    err := player.Save(db)
+    if err != nil {
+        t.Fatalf("Error saving player: %v", err)
+    }
+
+    retrievedPlayer, err := FindPlayerByID(db, player.ID)
+    if err != nil {
+        t.Fatalf("Error finding player: %v", err)
+    }
+
+    assert.Equal(t, player.Email, retrievedPlayer.Email)
+    assert.Equal(t, player.Avatar, retrievedPlayer.Avatar)
+}
+
+func TestUpdatePlayer(t *testing.T) {
+    db := SetupTestDB(t)
+    defer db.Close()
+
+    player := NewPlayer("updatePlayer@example.com", "hashed_password", "avatar.png")
+    err := player.Save(db)
+    if err != nil {
+        t.Fatalf("Error saving player: %v", err)
+    }
+
+    player.Score = 100
+    player.Avatar = "new_avatar.png"
+    err = player.Update(db)
+    if err != nil {
+        t.Fatalf("Error updating player: %v", err)
+    }
+
+    updatedPlayer, err := FindPlayerByID(db, player.ID)
+    if err != nil {
+        t.Fatalf("Error finding updated player: %v", err)
+    }
+
+    assert.Equal(t, 100, updatedPlayer.Score)
+    assert.Equal(t, "new_avatar.png", updatedPlayer.Avatar)
+}
+
+func TestDeletePlayer(t *testing.T) {
+    db := SetupTestDB(t)
+    defer db.Close()
+
+    // Save a player first
+    player := NewPlayer("deletePlayer@example.com", "hashed_password", "avatar.png")
+    err := player.Save(db)
+    if err != nil {
+        t.Fatalf("Error saving player: %v", err)
+    }
+
+    err = DeletePlayer(db, player.ID)
+    if err != nil {
+        t.Fatalf("Error deleting player: %v", err)
+    }
+
+    _, err = FindPlayerByID(db, player.ID)
+    if err == nil {
+        t.Errorf("Expected error, but found deleted player with ID: %d", player.ID)
+    }
+
+    if err.Error() != "player not found" {
+        t.Errorf("Expected 'player not found' error, got %v", err)
+    }
+}
