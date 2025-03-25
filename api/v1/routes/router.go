@@ -29,5 +29,13 @@ func NewRouter(db *sql.DB) *chi.Mux {
 		r.Delete("/{id}", player_controller.DeletePlayer(db))
 	})
 
+	router.Route("/stages", func(r chi.Router) {
+		r.Post("/", stage_controller.CreateStage(db))
+		r.Get("/", stage_controller.GetAllStages(db))
+		r.Get("/{id}", stage_controller.GetStageByID(db))
+		r.Patch("/{id}", stage_controller.UpdateStage(db))
+		r.Delete("/{id}", stage_controller.DeleteStage(db))
+	})
+
 	return router
 }
