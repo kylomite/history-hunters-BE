@@ -23,7 +23,6 @@ func NewQuestion(playerSessionID int, questionText string) *Question {
 	}
 }
 
-// Save persists the question to the database
 func (q *Question) Save(db *sql.DB) error {
 	if q.PlayerSessionID == 0 {
 		return errors.New("player_session_id is required")
@@ -45,6 +44,28 @@ func (q *Question) Save(db *sql.DB) error {
 	}
 
 	return nil
+}
+
+func FindByID(db *sql.DB, questionID, playerID int) (*Question, error) {
+	query := `
+		SELECT q.id, q.player_session_id, q.question_text, q.created_at, q.updated_at
+		FROM questions q
+		INNER JOIN player_sessions ps ON q.player_session_id = ps.id
+		WHERE q.id = $1 AND ps.player_id = $2
+	`
+
+	row := db.QueryRow(query, questionID, playerID)
+
+	q := &Question{}
+	err := row.Scan(&q.ID, &q.PlayerSessionID, &q.QuestionText, &q.CreatedAt, &q.UpdatedAt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("question not found or unauthorized access")
+		}
+		return nil, err
+	}
+
+	return q, nil
 }
 
 func (p *Question) Delete(db *sql.DB) error {
