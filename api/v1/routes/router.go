@@ -36,7 +36,7 @@ func NewRouter(db *sql.DB) *chi.Mux {
 			r.Get("/{session_id}", player_session_controller.GetPlayerSessionByID(db))
 			r.Patch("/{session_id}", player_session_controller.UpdatePlayerSession(db))
 
-			r.Route("{id}/questions", func(r chi.Router) {
+			r.Route("/{id}/questions", func(r chi.Router) {
 				r.Post("/", question_controller.CreateQuestion(db))
 				r.Get("/{question_id}", question_controller.GetQuestionByID(db))
 			})
