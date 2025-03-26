@@ -43,7 +43,8 @@ func NewRouter(db *sql.DB) *chi.Mux {
 
 				r.Route("/{id}/answers", func(r chi.Router) {
 					r.Post("/", answer_controller.CreateAnswer(db))
-					r.Get("/{question_id}", answer_controller.GetAnswerByID(db))
+					r.Get("/", answer_controller.GetAllAnswers(db))
+					r.Get("/{answer_id}", answer_controller.GetAnswerByID(db))
 				})
 			})
 			

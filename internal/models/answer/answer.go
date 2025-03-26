@@ -48,6 +48,25 @@ func (a *Answer) Save(db *sql.DB) error {
 	return nil
 }
 
+
+func GetAnswersByQuestionID(db *sql.DB, questionID int) ([]Answer, error) {
+	rows, err := db.Query("SELECT id, question_id, answer_text, correct FROM answers WHERE question_id = $1", questionID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var answers []Answer
+	for rows.Next() {
+		var a Answer
+		if err := rows.Scan(&a.ID, &a.QuestionID, &a.AnswerText, &a.Correct); err != nil {
+			return nil, err
+		}
+		answers = append(answers, a)
+	}
+	return answers, nil
+}
+
 func FindByID(db *sql.DB, answerID int) (*Answer, error) {
 	query := `
 		SELECT id, question_id, answer_text, correct, created_at, updated_at

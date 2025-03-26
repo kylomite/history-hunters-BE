@@ -38,9 +38,31 @@ func CreateAnswer(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+func GetAllAnswers(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the question_id from the URL
+		questionIDStr := chi.URLParam(r, "id")
+		questionID, err := strconv.Atoi(questionIDStr)
+		if err != nil {
+			http.Error(w, "Invalid question ID", http.StatusBadRequest)
+			return
+		}
+
+		// Fetch answers filtered by the question_id
+		answers, err := answer.GetAnswersByQuestionID(db, questionID)
+		if err != nil {
+			http.Error(w, "Failed to retrieve answers", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(answers)
+	}
+}
+
 func GetAnswerByID(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		answerIDStr := chi.URLParam(r, "question_id")
+		answerIDStr := chi.URLParam(r, "answer_id")
 		answerID, err := strconv.Atoi(answerIDStr)
 		if err != nil {
 			http.Error(w, "Invalid answer ID", http.StatusBadRequest)
