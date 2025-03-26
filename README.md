@@ -472,13 +472,54 @@ You will see this message logged in the terminal if this step is successful.
   ```
 ### Accessing Answers
 
+#### **Create an Answer**
+**Endpoint**: `POST players/{id}/player_session/{session_id}/questions/{question_id}/answers`
+- Creates a new answer.
+- Request Body
+```json
+{
+    "QuestionID": 1,
+    "AnswerText": "1738",
+    "Correct": false
+}
+```
+- Response
+ - **Status**: `201 Created`
+ - **Body**:
+ ```json
+{"ID":27,"QuestionID":1,"AnswerText":"1738","Correct":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"}
+  ```
+
+#### **Get All Answers**
+**Endpoint**: `GET players/{id}/player_session/{session_id}/questions/{question_id}/answers`
+- Retrieves a list of all answers for a specified question.
+
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+[{"ID":1,"QuestionID":1,"AnswerText":"1453","Correct":true,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"},{"ID":2,"QuestionID":1,"AnswerText":"1299","Correct":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"},{"ID":3,"QuestionID":1,"AnswerText":"1891","Correct":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"},{"ID":4,"QuestionID":1,"AnswerText":"1990","Correct":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"},{"ID":25,"QuestionID":1,"AnswerText":"1999","Correct":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"},{"ID":26,"QuestionID":1,"AnswerText":"1999","Correct":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"},{"ID":27,"QuestionID":1,"AnswerText":"1738","Correct":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"}]
+
+  ```
+
+#### **Get One stage**
+**Endpoint**: `GET players/{id}/player_session/{session_id}/questions/{question_id}/answers/{id}`
+- Retrieves a single answer by id.
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+{"ID":4,"QuestionID":1,"AnswerText":"1990","Correct":false,"CreatedAt":"2025-03-24T16:02:01.848259Z","UpdatedAt":"2025-03-24T16:02:01.848259Z"}
+
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+<!-- Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
@@ -487,7 +528,7 @@ Don't forget to give the project a star! Thanks again!
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+5. Open a Pull Request -->
 
 ### Top contributors:
 
