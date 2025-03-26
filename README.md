@@ -431,7 +431,45 @@ You will see this message logged in the terminal if this step is successful.
 #### **Delete a Player's Session**
 
 ### Accessing Questions
+#### **Create a Player Session's Question**
+**Endpoint**: `POST /players/{id}/player_session/{session_id}/questions`
+- Creates a new question.
+- Request Body
+```json
+{
+    "Player_session_id": 1,
+    "question_text": "Is this a test question?"
+}
+```
+- Response
+ - **Status**: `201 Created`
+ - **Body**:
+ ```json
+{
+    "ID": 7,
+    "PlayerSessionID": 1,
+    "QuestionText": "Is this a test question?",
+    "CreatedAt": "2025-03-25T19:08:05.702213Z",
+    "UpdatedAt": "2025-03-25T19:08:05.702213Z"
+}
+  ```
 
+#### **Get One Player Session Question**
+**Endpoint**: `GET /players/{id}/player_session/{session_id}/questions/{id}`
+- Retrieves a single player session question.
+
+- Response
+ - **Status**: `200 OK`
+ - **Body**:
+ ```json
+{
+    "ID": 7,
+    "PlayerSessionID": 1,
+    "QuestionText": "Is this a test question?",
+    "CreatedAt": "2025-03-25T19:08:05.702213Z",
+    "UpdatedAt": "2025-03-25T19:08:05.702213Z"
+}
+  ```
 ### Accessing Answers
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
